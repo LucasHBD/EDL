@@ -31,7 +31,8 @@ public class PilhaArray implements Pilha{
     }
     
     public Object pop() throws PilhaVaziaExcecao{
-        return null;
+        t = t - 1;
+        return a[t+1];
     }
 
     
