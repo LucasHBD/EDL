@@ -107,17 +107,17 @@ public class PilhaRubroNegra {
         int novaCapacidade = capacidade/2;
         if(novaCapacidade < qtdVermelhos + qtdPretos){
             novaCapacidade = qtdVermelhos + qtdPretos;
-        }
+        }// Verifica se a nova capacidade é menor que a quantidade de elementos na pilha
         Object novo_array[] = new Object[novaCapacidade];
         
         for (int i = 0; i < qtdVermelhos; i++){
             novo_array[i] = PilhaRubroNegra[i];
-        }
+        }// faz a cópia dos vermelhos
 
         int novaPosicaoPreta = novaCapacidade - qtdPretos;
         for(int i = 0; i < qtdPretos; i++){
             novo_array[novaPosicaoPreta + i] = PilhaRubroNegra[posicaoPreta + i];
-        }
+        }// faz a cópia dos pretos
 
         PilhaRubroNegra = novo_array;
         capacidade = novaCapacidade;
@@ -127,15 +127,22 @@ public class PilhaRubroNegra {
 
     public static void main(String[] args){
 
-        PilhaRubroNegra p = new PilhaRubroNegra(15, 0);
+        PilhaRubroNegra p = new PilhaRubroNegra(10, 0);
         System.out.println("Tamanho do Array: " + p.sizeArray());
         p.pushVermelho(1);
         System.out.println("Tamanho do Array: " + p.sizeArray());
         p.pushVermelho(2);
+        p.pushVermelho(3);
+        p.pushVermelho(4);
+        p.pushVermelho(5);
         System.out.println("Tamanho do Array: " + p.sizeArray());
         p.pushPreto(1);
         System.out.println("Tamanho do Array: " + p.sizeArray());
         p.pushPreto(2);
+        p.pushPreto(3);
+        p.pushPreto(4);
+        p.pushPreto(5);
+        p.pushPreto(6);
         System.out.println("Tamanho do Array: " + p.sizeArray());
 
         System.out.println("Tamanho do Array: " + p.sizeArray());
@@ -159,6 +166,9 @@ public class PilhaRubroNegra {
 
         p.pushVermelho(2);
         p.pushVermelho(3);
+
+        System.out.println(p.topVermelho());
+        System.out.println(p.topPreto());
         
     }
 }
