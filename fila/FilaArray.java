@@ -2,10 +2,14 @@ public class FilaArray implements Fila{
     int i = 0, f = 0, N, incremento;
     Object O[];
 
-    public fila(int N, int incremento){
+    public FilaArray(int N, int incremento){
         O = new Object[N];
         this.N = N;
         this.incremento = incremento;
+    }
+
+    public Object first(){
+        return O[i - i+1];
     }
 
     public boolean isEmpty(){
@@ -41,7 +45,41 @@ public class FilaArray implements Fila{
     public Object dequeue(){
         if(isEmpty()) throw new FilaVaziaExcecao("Fila Vazia!"); //se estiver vazia, lança exceção
         Object temp = O[i]; // armazena o valor do inicio da fila em uma variável temporária
+        O[i] = null; // atualiza a posição de inicio da fila para o próximo
         i = (i+1)%N; // atualiza a posição de inicio da fila para o próximo
         return temp; // retorna o valor armazenado
+    }
+
+    public void mostrar(){
+        for(int i = 0; i <= size(); i++){
+            System.out.print(O[i]);
+            System.out.print(", ");
+        }
+    }
+
+    public static void main(String[] args){
+        FilaArray fila = new FilaArray(5,0);
+        fila.enqueue(5);
+        fila.enqueue(6);
+        fila.dequeue();
+        fila.enqueue(8);
+        fila.enqueue(2);
+
+
+        fila.mostrar();
+        System.out.println();
+        System.out.println(fila.first());
+
+        fila.dequeue();
+        fila.dequeue();
+        fila.enqueue(1);
+        fila.enqueue(10);
+        fila.enqueue(16);
+        fila.enqueue(19);
+        fila.enqueue(20);
+        fila.mostrar();
+
+        System.out.println();
+        System.out.println(fila.first());
     }
 }
