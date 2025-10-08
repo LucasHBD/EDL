@@ -9,7 +9,7 @@ public class FilaArray implements Fila{
     }
 
     public Object first(){
-        return O[i - i+1];
+        return O[i];
     }
 
     public boolean isEmpty(){
@@ -45,14 +45,15 @@ public class FilaArray implements Fila{
     public Object dequeue(){
         if(isEmpty()) throw new FilaVaziaExcecao("Fila Vazia!"); //se estiver vazia, lança exceção
         Object temp = O[i]; // armazena o valor do inicio da fila em uma variável temporária
-        O[i] = null; // atualiza a posição de inicio da fila para o próximo
+        //O[i] = null; // atualiza a posição de inicio da fila para o próximo
         i = (i+1)%N; // atualiza a posição de inicio da fila para o próximo
         return temp; // retorna o valor armazenado
     }
 
     public void mostrar(){
-        for(int i = 0; i <= size(); i++){
-            System.out.print(O[i]);
+        int ii = this.i;
+        for(int i = 0; i < size(); i++, ii=(ii+1)%N){
+            System.out.print(O[ii]);
             System.out.print(", ");
         }
     }
@@ -77,9 +78,35 @@ public class FilaArray implements Fila{
         fila.enqueue(16);
         fila.enqueue(19);
         fila.enqueue(20);
+        fila.enqueue(22);
+        fila.dequeue();
+        fila.dequeue();
         fila.mostrar();
 
         System.out.println();
         System.out.println(fila.first());
+
+        fila.enqueue(37);
+        fila.enqueue(45);
+        fila.dequeue();
+        fila.dequeue();
+        fila.mostrar();
+
+        System.out.println();
+        System.out.println(fila.first());
+
+        fila.dequeue();
+        fila.dequeue();
+        fila.mostrar();
+
+        System.out.println();
+        System.out.println(fila.first());
+
+        fila.dequeue();
+        fila.dequeue();
+        fila.dequeue();
+        fila.mostrar();
+        //fila.dequeue();
+        System.out.println();
     }
 }
