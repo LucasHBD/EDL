@@ -49,24 +49,7 @@ public class PilhaRubroNegra {
 
     public void pushVermelho(Object o){
         if(posicaoVermelha >= capacidade - 1){
-            if (FC == 0){
-            capacidade *= 2;
-            }
-            else{
-                capacidade += FC;
-            }
-            Object novo_array[] = new Object[capacidade];
-            for (int i = 0; i < PilhaRubroNegra.length; i++) {
-                novo_array[i] = PilhaRubroNegra[i];
-            }
-            PilhaRubroNegra = novo_array;
-        }
-
-        PilhaRubroNegra[++posicaoVermelha] = o;
-    }
-
-    public void pushPreto(Object o){
-        if(posicaoPreta <= posicaoVermelha + 1){
+            int tamanhoPreto = sizePreto();
             if (FC == 0){
                 capacidade *= 2;
             }
@@ -74,11 +57,41 @@ public class PilhaRubroNegra {
                 capacidade += FC;
             }
             Object novo_array[] = new Object[capacidade];
-            for (int i = 0; i < PilhaRubroNegra.length; i++) {
+            int novaPosicaoPreta = capacidade - tamanhoPreto;
+            for (int i = 0; i < posicaoVermelha; i++) {
                 novo_array[i] = PilhaRubroNegra[i];
             }
+
+            for (int i = 0; i < tamanhoPreto; i++){
+                novo_array[novaPosicaoPreta + i] = PilhaRubroNegra[posicaoPreta + i];
+            }
             PilhaRubroNegra = novo_array;
-            posicaoPreta = capacidade;
+            posicaoPreta = novaPosicaoPreta;
+        }
+
+        PilhaRubroNegra[++posicaoVermelha] = o;
+    }
+
+    public void pushPreto(Object o){
+        if(posicaoPreta <= posicaoVermelha + 1){
+            int tamanhoPreto = sizePreto();
+            if (FC == 0){
+                capacidade *= 2;
+            }
+            else{
+                capacidade += FC;
+            }
+            Object novo_array[] = new Object[capacidade];
+            int novaPosicaoPreta = capacidade - tamanhoPreto;
+            for (int i = 0; i < posicaoVermelha; i++) {
+                novo_array[i] = PilhaRubroNegra[i];
+            }
+
+            for (int i = 0; i < tamanhoPreto; i++){
+                novo_array[novaPosicaoPreta + i] = PilhaRubroNegra[posicaoPreta + i];
+            }
+            PilhaRubroNegra = novo_array;
+            posicaoPreta = novaPosicaoPreta;
         }
 
         PilhaRubroNegra[--posicaoPreta] = o;
@@ -105,9 +118,6 @@ public class PilhaRubroNegra {
         int qtdPretos = sizePreto();
 
         int novaCapacidade = capacidade/2;
-        if(novaCapacidade < qtdVermelhos + qtdPretos){
-            novaCapacidade = qtdVermelhos + qtdPretos;
-        }// Verifica se a nova capacidade é menor que a quantidade de elementos na pilha
         Object novo_array[] = new Object[novaCapacidade];
         
         for (int i = 0; i < qtdVermelhos; i++){
@@ -127,7 +137,7 @@ public class PilhaRubroNegra {
 
     public static void main(String[] args){
 
-        PilhaRubroNegra p = new PilhaRubroNegra(10, 0);
+        PilhaRubroNegra p = new PilhaRubroNegra(5, 0);
         System.out.println("Tamanho do Array: " + p.sizeArray());
         p.pushVermelho(1);
         System.out.println("Tamanho do Array: " + p.sizeArray());
@@ -142,8 +152,13 @@ public class PilhaRubroNegra {
         p.pushPreto(3);
         p.pushPreto(4);
         p.pushPreto(5);
+        System.out.print("Pilha Rubro Negra: { ");
+        for (int i = 0; i < p.capacidade; i++){
+            System.out.print(p.PilhaRubroNegra[i]);
+            System.out.print(", ");
+        }
+        System.out.println(" }");
         p.pushPreto(6);
-        System.out.println("Tamanho do Array: " + p.sizeArray());
 
         System.out.println("Tamanho do Array: " + p.sizeArray());
         System.out.print("Pilha Rubro Negra: { ");
@@ -166,6 +181,19 @@ public class PilhaRubroNegra {
 
         p.pushVermelho(2);
         p.pushVermelho(3);
+        p.popPreto();
+        p.popPreto();
+        p.popVermelho();
+        p.popVermelho();
+        p.popVermelho();
+        p.popVermelho();
+
+        System.out.print("Pilha Rubro Negra: { ");
+        for (int i = 0; i < p.capacidade; i++){
+            System.out.print(p.PilhaRubroNegra[i]);
+            System.out.print(", ");
+        }
+        System.out.println(" }");
 
         System.out.println(p.topVermelho());
         System.out.println(p.topPreto());
