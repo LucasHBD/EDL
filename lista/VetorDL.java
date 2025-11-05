@@ -71,4 +71,40 @@ public class VetorDL implements VetorInterface{
         atual.setElemento(elemento);
         return temp;
     }
+
+    public void printVetor(){
+        if(isEmpty()){
+            System.out.println("Vetor Vazio");
+        }
+        else{
+            System.out.print("[");
+
+            for(No n = inicio; n != null; n = n.getProximo()){
+                System.out.print(n.getElemento() + " ");
+            }
+            System.out.print("]\n");
+        }
+    }
+
+    public static void main(String args[]){
+        Vetor vetor = new Vetor(5, 0);
+        vetor.insertAtRank(0, 1);
+        vetor.printVetor();
+        vetor.insertAtRank(1, 2);
+        vetor.printVetor();
+        vetor.insertAtRank(2, 3);
+        vetor.printVetor();
+        vetor.insertAtRank(1, 4);
+        vetor.printVetor();
+        vetor.insertAtRank(3, 5);
+        vetor.printVetor();
+        vetor.insertAtRank(2, 6);
+        vetor.printVetor();
+        System.out.println(vetor.removeAtRank(2));
+        vetor.printVetor();
+        vetor.replaceAtRank(0, 10);
+        vetor.printVetor();
+        System.out.println(vetor.elementAtRank(1));
+        vetor.printVetor();
+    }
 }
