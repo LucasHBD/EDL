@@ -6,8 +6,8 @@ public class ListaLigada {
     private int capacidade;
 
     public ListaLigada(){
-        this.inicio = null;
-        this.fim = null;
+        this.inicio = new No();
+        this.fim = new No();
         this.capacidade = 0;
     }
 
@@ -85,13 +85,14 @@ public class ListaLigada {
     public No insertFirst(Object e){
         No novo_no = new No();
         novo_no.setElemento(e);
-        if(inicio == null){
-            inicio = novo_no;
-            fim = novo_no;
+        if(isEmpty()){
+            inicio.setProximo(novo_no);
+            fim.setAnterior(novo_no);;
         }
         novo_no.setAnterior(inicio);
         novo_no.setProximo(inicio.getProximo());
-        inicio = novo_no;
+        inicio.getProximo().setAnterior(novo_no);
+        inicio.setProximo(novo_no);
         capacidade++;
         return novo_no;
     }
@@ -99,13 +100,14 @@ public class ListaLigada {
     public No insertLast(Object e){
         No novo_no = new No();
         novo_no.setElemento(e);
-        if(fim == null){
-            inicio = novo_no;
-            fim = novo_no;
+        if(isEmpty()){
+            inicio.setProximo(novo_no);
+            fim.setAnterior(novo_no);;
         }
         novo_no.setAnterior(fim.getAnterior());
         novo_no.setProximo(fim);
-        fim = novo_no;
+        fim.getAnterior().setProximo(novo_no);
+        fim.setAnterior(novo_no);
         capacidade++;
         return novo_no;
     }
@@ -134,7 +136,7 @@ public class ListaLigada {
         else{
             System.out.print("[");
 
-            for(No n = inicio; n != null; n = n.getProximo()){
+            for(No n = inicio.getProximo(); n != fim; n = n.getProximo()){
                 System.out.print(n.getElemento() + " ");
             }
             System.out.print("]\n");
