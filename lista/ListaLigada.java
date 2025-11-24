@@ -8,6 +8,8 @@ public class ListaLigada {
     public ListaLigada(){
         this.inicio = new No();
         this.fim = new No();
+        fim.setAnterior(inicio);
+        inicio.setProximo(fim);
         this.capacidade = 0;
     }
 
