@@ -8,6 +8,8 @@ public class Sequencia{
     public Sequencia(){
         this.inicio = new No();
         this.fim = new No();
+        fim.setAnterior(inicio);
+        inicio.setProximo(fim);
         this.capacidade = 0;
     }
 
@@ -20,7 +22,7 @@ public class Sequencia{
     }
 
     public No atRank(int rank) throws ElemVazia{
-        if(inicio.getElemento() == null) throw new ElemVazia("Vetor Vazio");
+        if(inicio.getProximo() == null) throw new ElemVazia("Vetor Vazio");
         No atual = new No();
         if(rank < (size()/2)){
             atual = inicio;
@@ -40,7 +42,7 @@ public class Sequencia{
     }
 
     public int rankOf(No n){
-        n = n.getAnterior().getProximo();
+        n = inicio.getProximo();
         int r = 0;
         while(n != n.getElemento() && n != fim){
             n = n.getProximo();
@@ -115,10 +117,10 @@ public class Sequencia{
     public No insertFirst(Object e){
         No novo_no = new No();
         novo_no.setElemento(e);
-        if(isEmpty()){
-            inicio.setProximo(novo_no);
-            fim.setAnterior(novo_no);;
-        }
+        // if(isEmpty()){
+        //     inicio.setProximo(novo_no);
+        //     fim.setAnterior(novo_no);
+        // }
         novo_no.setAnterior(inicio);
         novo_no.setProximo(inicio.getProximo());
         inicio.getProximo().setAnterior(novo_no);
@@ -205,56 +207,53 @@ public class Sequencia{
         }
         System.out.println();
     }
+    public static void main(String[] args) {
+        try {
+            Sequencia seq = new Sequencia();
 
-    public class Main {
-        public static void main(String[] args) {
-            try {
-                Sequencia seq = new Sequencia();
+            System.out.println("=== Teste da classe Sequencia ===");
 
-                System.out.println("=== Teste da classe Sequencia ===");
+            // Testando inserções básicas
+            System.out.println("\nInserindo elementos com insertFirst...");
+            seq.insertFirst("C");
+            seq.insertFirst("B");
+            seq.insertFirst("A");
 
-                // Testando inserções básicas
-                System.out.println("\nInserindo elementos com insertFirst...");
-                seq.insertFirst("C");
-                seq.insertFirst("B");
-                seq.insertFirst("A");
+            // Agora lista deve ser: A, B, C
+            imprimirSequencia(seq);
 
-                // Agora lista deve ser: A, B, C
-                imprimirSequencia(seq);
+            System.out.println("\nInserindo elementos com insertLast...");
+            seq.insertLast("D");
+            seq.insertLast("E");
 
-                System.out.println("\nInserindo elementos com insertLast...");
-                seq.insertLast("D");
-                seq.insertLast("E");
+            // Agora lista deve ser: A, B, C, D, E
+            imprimirSequencia(seq);
 
-                // Agora lista deve ser: A, B, C, D, E
-                imprimirSequencia(seq);
+            // Testando acesso por rank
+            System.out.println("\nElemento no rank 2 (esperado: C): " + seq.elementAtRank(2));
 
-                // Testando acesso por rank
-                System.out.println("\nElemento no rank 2 (esperado: C): " + seq.elementAtRank(2));
+            // Testando insertAtRank
+            System.out.println("\nInserindo 'X' no rank 1...");
+            seq.insertAtRank(1, "X");
+            // Esperado: A, X, B, C, D, E
+            imprimirSequencia(seq);
 
-                // Testando insertAtRank
-                System.out.println("\nInserindo 'X' no rank 1...");
-                seq.insertAtRank(1, "X");
-                // Esperado: A, X, B, C, D, E
-                imprimirSequencia(seq);
+            // Testando removeAtRank
+            System.out.println("\nRemovendo elemento no rank 3...");
+            Object removido = seq.removeAtRank(3);
+            System.out.println("Elemento removido: " + removido);
+            imprimirSequencia(seq);
 
-                // Testando removeAtRank
-                System.out.println("\nRemovendo elemento no rank 3...");
-                Object removido = seq.removeAtRank(3);
-                System.out.println("Elemento removido: " + removido);
-                imprimirSequencia(seq);
+            // Testando replaceAtRank
+            System.out.println("\nSubstituindo elemento no rank 2 por 'Z'...");
+            seq.replaceAtRank(2, "Z");
+            imprimirSequencia(seq);
 
-                // Testando replaceAtRank
-                System.out.println("\nSubstituindo elemento no rank 2 por 'Z'...");
-                seq.replaceAtRank(2, "Z");
-                imprimirSequencia(seq);
+            // Fim dos testes
+            System.out.println("\nFim dos testes.");
 
-                // Fim dos testes
-                System.out.println("\nFim dos testes.");
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

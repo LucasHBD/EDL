@@ -107,7 +107,8 @@ public class PilhaRubroNegra {
 
     public Object popPreto() throws PilhaVaziaExcecao{
         if (isEmptyPreto()) throw new PilhaVaziaExcecao("Pilha Vazia!");
-        if (sizeArray() <= capacidade/3) reducao();
+        if (sizeArray() <= capacidade/3) 
+            reducao();
         PilhaRubroNegra[posicaoPreta] = null;
         posicaoPreta = posicaoPreta + 1;
         return PilhaRubroNegra[posicaoPreta - 1];
