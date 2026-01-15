@@ -40,8 +40,8 @@ public class Sequencia{
                 atual = atual.getAnterior();
             }
         }
-        atual.setAnterior(atual.getAnterior());
-        atual.setProximo(atual.getProximo());
+        // atual.setAnterior(atual.getAnterior());
+        // atual.setProximo(atual.getProximo());
         return atual;
     }
 
@@ -252,6 +252,10 @@ public class Sequencia{
 
             // Testando replaceAtRank
             System.out.println("\nSubstituindo elemento no rank 2 por 'Z'...");
+            seq.replaceAtRank(2, "Z");
+            seq.imprimirSequencia();
+
+            System.out.println("\nTrocando elemento no 'D' por 'Z'...");
             seq.replaceAtRank(2, "Z");
             seq.imprimirSequencia();
 
