@@ -1,5 +1,7 @@
 package arvore;
 
+import java.util.Arrays;
+
 public class ArvoreAB {
     private No raiz;
     private int tamanho;
@@ -79,13 +81,14 @@ public class ArvoreAB {
         return Math.max(alturaEsquerda, alturaDireita) + 1;
     }
 
-    public void insertRoot(Object elemento) throws noElemen{
+    public No insertRoot(Object elemento) throws noElemen{
         if (raiz != null){
             throw new noElemen("Raiz ja existe!");
         }
         No no = new No(elemento, null);
         raiz = no;
         tamanho++;
+        return no;
     }
 
     public No insertLeft(No pai, Object elemento) throws noElemen{
@@ -148,56 +151,57 @@ public class ArvoreAB {
         System.out.println(no.getElemento());
     }
 
+    public static void printArvore(ArvoreAB arvore) {
+        int altura = arvore.height(arvore.root());
+        int largura = (int) Math.pow(2, altura) - 1;
 
-    public static void main(String[] args) {
+        String[][] matriz = new String[altura][largura];
 
-        try {
-            ArvoreAB arvore = new ArvoreAB();
-
-            // Inserindo a raiz
-            arvore.insertRoot("A");
-
-            // Referência para a raiz
-            No raiz = arvore.root();
-
-            // Inserindo filhos da raiz
-            No b = arvore.insertLeft(raiz, "B");
-            No c = arvore.insertRight(raiz, "C");
-
-            // Inserindo filhos de B
-            No d = arvore.insertLeft(b, "D");
-            No e = arvore.insertRight(b, "E");
-
-            // Inserindo filhos de C
-            No f = arvore.insertLeft(c, "F");
-            No g = arvore.insertRight(c, "G");
-
-            // Percursos
-            System.out.println("Pré-Ordem:");
-            arvore.preOrder(raiz);
-
-            System.out.println("\nEm-Ordem:");
-            arvore.inOrder(raiz);
-
-            System.out.println("\nPós-Ordem:");
-            arvore.postOrder(raiz);
-
-            // Testes adicionais
-            System.out.println("\nTamanho da árvore: " + arvore.size());
-            System.out.println("Altura da árvore: " + arvore.height(raiz));
-            System.out.println("Profundidade do nó E: " + arvore.depth(e));
-
-            // Removendo um nó folha
-            System.out.println("\nRemovendo o nó G...");
-            arvore.remove(g);
-
-            System.out.println("\nEm-Ordem após remoção:");
-            arvore.inOrder(raiz);
-
-            System.out.println("\nNovo tamanho da árvore: " + arvore.size());
-
-        } catch (noElemen e) {
-            System.out.println("Erro: " + e.getMessage());
+        for (String[] linha : matriz) {
+            Arrays.fill(linha, " ");
         }
+
+        preencher(matriz, arvore.root(), 0, 0, largura - 1);
+
+        // Imprimir matriz
+        for (String[] linha : matriz) {
+            for (String val : linha) {
+                System.out.print(val);
+            }
+            System.out.println();
+        }
+    }
+
+    private static void preencher(String[][] matriz, No no, int nivel, int inicio, int fim) {
+        if (no == null) return;
+
+        int meio = (inicio + fim) / 2;
+
+        matriz[nivel][meio] = no.getElemento().toString();
+
+        preencher(matriz, no.getFilhoEsquerdo(), nivel + 1, inicio, meio - 1);
+        preencher(matriz, no.getFilhoDireito(), nivel + 1, meio + 1, fim);
+    }
+
+
+    public static void main(String[] args) throws Exception {
+        ArvoreAB arvore = new ArvoreAB();
+
+        // Montando a árvore
+        No raiz = arvore.insertRoot("A");
+
+        No b = arvore.insertLeft(raiz, "B");
+        No c = arvore.insertRight(raiz, "C");
+
+        No d = arvore.insertLeft(b, "D");
+        No e = arvore.insertRight(b, "E");
+
+        No f = arvore.insertLeft(c, "F");
+        No g = arvore.insertRight(c, "G");
+
+        No h = arvore.insertLeft(d, "H");
+
+        // Desenhar árvore
+        printArvore(arvore);
     }
 }
