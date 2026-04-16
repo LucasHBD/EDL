@@ -17,6 +17,6 @@ public class hash_table {
     }
 
     public void insert(Object key, Object elemento){
-        if(capacidade == tamanho)
+        if(capacidade == tamanho);
     }
 }

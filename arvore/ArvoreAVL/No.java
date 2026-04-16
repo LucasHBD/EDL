@@ -1,7 +1,7 @@
 package arvore.ArvoreAVL;
 
 public class No {
-    private Object elemento;
+    private Integer elemento;
     private No filhoEsquerdo, filhoDireito, pai;
     private Integer balanceamento;
 
@@ -13,7 +13,7 @@ public class No {
         this.balanceamento = 0;
     }
 
-    public No(Object elemento, No pai){
+    public No(Integer elemento, No pai){
         this.elemento = elemento;
         this.pai = pai;
         this.filhoEsquerdo = null;
@@ -21,11 +21,11 @@ public class No {
         this.balanceamento = 0;
     }
 
-    public Object getElemento(){
+    public Integer getElemento(){
         return elemento;
     }
 
-    public void setElemento(Object elemento){
+    public void setElemento(Integer elemento){
         this.elemento = elemento;
     }
 
@@ -59,5 +59,12 @@ public class No {
 
     public void setBalanceamento(Integer balanceamento) {
         this.balanceamento = balanceamento;
+    }
+
+    public Boolean oneChild(){
+        if((filhoDireito == null && filhoEsquerdo != null) || (filhoDireito != null && filhoEsquerdo == null)){
+            return true;
+        }
+        return false;
     }
 }
