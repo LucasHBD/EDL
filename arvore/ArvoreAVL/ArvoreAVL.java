@@ -10,10 +10,9 @@ public class ArvoreAVL {
     private ArrayList<No> nos;
 
     public ArvoreAVL(){
-        this.raiz = new No();
+        this.raiz = null;
         this.tamanho = 0;
-        this.desbalanceado = new No();
-        this.desbalanceado.setBalanceamento(0);
+        this.desbalanceado = null;
     }
 
     public Integer size(){
@@ -84,43 +83,47 @@ public class ArvoreAVL {
 
     private void rotacaoEsquerda(No node){
         No novo_pai = node.getFilhoDireito();
-        novo_pai.setPai(node.getPai());
-        if(novo_pai.getFilhoEsquerdo() == null){
-            novo_pai.setFilhoEsquerdo(node);
-        } else{
-            node.setFilhoDireito(novo_pai.getFilhoEsquerdo());
+        node.setFilhoDireito(novo_pai.getFilhoEsquerdo());
+        if(novo_pai.getFilhoEsquerdo() != null){
             novo_pai.getFilhoEsquerdo().setPai(node);
-            novo_pai.setFilhoEsquerdo(node);
         }
+        novo_pai.setPai(node.getPai());
+        if(node.getPai() == null){
+            raiz = novo_pai;
+        } else if(node == node.getPai().getFilhoEsquerdo()){
+            node.getPai().setFilhoEsquerdo(novo_pai);
+        } else {
+            node.getPai().setFilhoDireito(novo_pai);
+        }
+
+        novo_pai.setFilhoEsquerdo(node);
         node.setPai(novo_pai);
-        if(node == raiz) raiz = novo_pai;
-        Integer novo_fb = node.getBalanceamento() + 1 - (Math.min(novo_pai.getBalanceamento(), 0));
-        node.setBalanceamento(novo_fb);
-        novo_fb = novo_pai.getBalanceamento() + 1 + (Math.max(node.getBalanceamento(), 0));
-        novo_pai.setBalanceamento(novo_fb);
     }
 
     private void rotacaoDireita(No node){
         No novo_pai = node.getFilhoEsquerdo();
-        novo_pai.setPai(node.getPai());
-        if(novo_pai.getFilhoDireito() == null){
-            novo_pai.setFilhoDireito(node);
-        } else{
-            node.setFilhoEsquerdo(novo_pai.getFilhoDireito());
+
+        node.setFilhoEsquerdo(novo_pai.getFilhoDireito());
+        if(novo_pai.getFilhoDireito() != null){
             novo_pai.getFilhoDireito().setPai(node);
-            novo_pai.setFilhoDireito(node);
         }
+
+        novo_pai.setPai(node.getPai());
+
+        if(node.getPai() == null){
+            raiz = novo_pai;
+        } else if(node == node.getPai().getFilhoEsquerdo()){
+            node.getPai().setFilhoEsquerdo(novo_pai);
+        } else {
+            node.getPai().setFilhoDireito(novo_pai);
+        }
+
+        novo_pai.setFilhoDireito(node);
         node.setPai(novo_pai);
-        if(node == raiz) raiz = novo_pai;
-        Integer novo_fb = node.getBalanceamento() - 1 - (Math.max(novo_pai.getBalanceamento(), 0));
-        node.setBalanceamento(novo_fb);
-        novo_fb = novo_pai.getBalanceamento() - 1 + (Math.min(node.getBalanceamento(), 0));
-        novo_pai.setBalanceamento(novo_fb);
     }
 
     public Boolean isEmpty(){
-        if(tamanho == 0) return true;
-        return false;
+        return raiz == null;
     }
 
     public No pai(No node){
@@ -135,14 +138,14 @@ public class ArvoreAVL {
         return node.getFilhoDireito();
     }
 
-    public Boolean umFilhoEsquerdo(No node){
-        if(node.getPai().getFilhoEsquerdo() == node) return true;
-        return false;
+    public Boolean umFilhoDireito(No node){
+        if(node.getPai() == null) return false;
+        return node.getPai().getFilhoDireito() == node;
     }
 
-    public Boolean umFilhoDireito(No node){
-        if(node.getPai().getFilhoDireito() == node) return true;
-        return false;
+    public Boolean umFilhoEsquerdo(No node){
+        if(node.getPai() == null) return false;
+        return node.getPai().getFilhoEsquerdo() == node;
     }
 
     public Boolean temFilhoDireito(No node){
@@ -192,6 +195,7 @@ public class ArvoreAVL {
     }
 
     public void inserirNo(No node){
+        desbalanceado = null;
         No aux = raiz;
         if(isEmpty()){
             raiz = node;
@@ -220,15 +224,17 @@ public class ArvoreAVL {
             tamanho++;
             CalcularFbInsercao(node);
         }
-        if(desbalanceado.getBalanceamento() != null){
+        if(desbalanceado != null){
             if(desbalanceado.getBalanceamento() == 2){
-                if(desbalanceado.getFilhoEsquerdo().getBalanceamento() == -1){
+                if(desbalanceado.getFilhoEsquerdo() != null &&
+                desbalanceado.getFilhoEsquerdo().getBalanceamento() == -1){
                     rotacaoEsquerda(desbalanceado.getFilhoEsquerdo());
                 }
                 rotacaoDireita(desbalanceado);
             }
-            else{
-                if(desbalanceado.getFilhoDireito().getBalanceamento() == 1){
+            else if(desbalanceado.getBalanceamento() == -2){
+                if(desbalanceado.getFilhoDireito() != null &&
+                desbalanceado.getFilhoDireito().getBalanceamento() == 1){
                     rotacaoDireita(desbalanceado.getFilhoDireito());
                 }
                 rotacaoEsquerda(desbalanceado);
@@ -297,66 +303,41 @@ public class ArvoreAVL {
             tamanho--;
         }
 
-        else{
-            No node_pai = node.getPai();
-            No node_sub = node;
-            if(!temFilhoEsquerdo(node_sub)){
-                node_sub = node.getFilhoDireito();
-            }
-            else{
-                noSub(node.getFilhoDireito(), node_sub);
-                if(temFilhoDireito(node_sub)){
-                    node_sub.getPai().setFilhoEsquerdo(node_sub.getFilhoDireito());
-                    node.getFilhoDireito().setPai(node_sub.getPai());
-                }
-                node_sub.setFilhoDireito(node.getFilhoDireito());
-                node.getFilhoDireito().setPai(node_sub);
-            }
-            node_sub.setFilhoEsquerdo(node.getFilhoEsquerdo());
-            node.getFilhoEsquerdo().setPai(node_sub);
-            if(node != raiz){
-                if(umFilhoDireito(node)){
-                    node_pai.setFilhoDireito(node_sub);
-                }
-                else {
-                    node_pai.setFilhoEsquerdo(node_sub);
-                }
-            }
-            else {
-                raiz = node_sub;
-            }
-            if(node != node_sub.getPai()){
-                calcularFbRemocao(node_sub);
-            }
-            node_sub.setPai(node_pai);
-            calcularFbRemocao(node_sub.getFilhoEsquerdo());
-            tamanho--;
+        else {
+            No sucessor = noSub(node.getFilhoDireito());
+            node.setElemento(sucessor.getElemento());
+            removerNo(sucessor);
         }
-        if(desbalanceado.getBalanceamento() != null && desbalanceado != node){
+        if(desbalanceado != null && desbalanceado != node){
+
             if(desbalanceado.getBalanceamento() == 2){
-                if(desbalanceado.getFilhoEsquerdo().getBalanceamento() == -1){
+
+                if(desbalanceado.getFilhoEsquerdo() != null &&
+                desbalanceado.getFilhoEsquerdo().getBalanceamento() == -1){
                     rotacaoEsquerda(desbalanceado.getFilhoEsquerdo());
                 }
+
                 rotacaoDireita(desbalanceado);
-            }
-            else{
-                if(desbalanceado.getFilhoDireito().getBalanceamento() == 1){
+
+            } else if(desbalanceado.getBalanceamento() == -2){
+
+                if(desbalanceado.getFilhoDireito() != null &&
+                desbalanceado.getFilhoDireito().getBalanceamento() == 1){
                     rotacaoDireita(desbalanceado.getFilhoDireito());
                 }
-                rotacaoEsquerda(desbalanceado);
+
+                if(desbalanceado.getFilhoDireito() != null){
+                    rotacaoEsquerda(desbalanceado);
+                }
             }
         }
     }
 
-    private void noSub(No node, No node_sub){
-        if(noInterno(node) && node.getFilhoEsquerdo() != null){
-            noSub(node.getFilhoEsquerdo(), node_sub);
-            return;
+    private No noSub(No node){
+        if(node.getFilhoEsquerdo() != null){
+            return noSub(node.getFilhoEsquerdo());
         }
-        if((umFilhoEsquerdo(node) && noExterno(node)) || (umFilhoEsquerdo(node) && temFilhoDireito(node) && !temFilhoEsquerdo(node))){
-            node_sub = node;
-            return;
-        }
+        return node;
     }
 
     private void inOrderNos(No node){
@@ -377,25 +358,73 @@ public class ArvoreAVL {
 
     public void desenharArvore(){
         Integer altura = altura(raiz);
-        Integer[][] matriz = new Integer[altura+1][size()];
-        ArrayList<No> nodes = inOrderNosArray();
+
+        ArrayList<No> nodes = inOrderNosArray(); // primeiro pega os nós
+
+        Integer[][] matriz = new Integer[altura+1][nodes.size()]; // usa nodes.size()
+
         Integer k = 0;
+
         for(No node : nodes){
             matriz[profundidade(node)][k] = node.getElemento();
             k++;  
         }
+
         for(int i = 0; i <= altura; i++){
-            for(int j = 0; j < size(); j++){
-                Integer print;
+            for(int j = 0; j < nodes.size(); j++){
                 if(matriz[i][j] == null)
                     System.out.print(" ");
-                
                 else
                     System.out.print(matriz[i][j]);
-                
+
                 System.out.print(" ");
             }
             System.out.println();
+        }
+    }
+
+    public static No buscar(No raiz, int valor) {
+        if (raiz == null || raiz.getElemento() == null) return null;
+
+        if (raiz.getElemento() == valor) return raiz;
+
+        if (valor < raiz.getElemento())
+            return buscar(raiz.getFilhoEsquerdo(), valor);
+        else
+            return buscar(raiz.getFilhoDireito(), valor);
+    }
+    public static void main(String[] args) {
+
+        ArvoreAVL arvore = new ArvoreAVL();
+
+        int[] valores = {10, 5, 15, 2, 8, 22};
+
+        System.out.println("=== INSERÇÕES INICIAIS ===");
+
+        for (int v : valores) {
+            System.out.println("\nInserindo: " + v);
+
+            No novo = new No(v, null); // <-- ajuste aqui
+            arvore.inserirNo(novo);
+
+            arvore.desenharArvore();
+        }
+
+        System.out.println("\n=== INSERINDO 25 ===");
+        No n25 = new No(25, null);
+        arvore.inserirNo(n25);
+
+        arvore.desenharArvore();
+
+        System.out.println("\n=== REMOVENDO 5 ===");
+
+        No noRemover = buscar(arvore.root(), 5);
+
+        if (noRemover != null) {
+            arvore.removerNo(noRemover);
+            arvore.desenharArvore();
+        } else {
+            System.out.println("Nó 5 não encontrado!");
         }
     }
 }
