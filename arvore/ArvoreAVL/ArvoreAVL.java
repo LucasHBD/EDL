@@ -1,6 +1,7 @@
 package arvore.ArvoreAVL;
 
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class ArvoreAVL {
     private No raiz;
@@ -326,9 +327,7 @@ public class ArvoreAVL {
                     rotacaoDireita(desbalanceado.getFilhoDireito());
                 }
 
-                if(desbalanceado.getFilhoDireito() != null){
-                    rotacaoEsquerda(desbalanceado);
-                }
+                rotacaoEsquerda(desbalanceado);
             }
         }
     }
@@ -361,12 +360,12 @@ public class ArvoreAVL {
 
         ArrayList<No> nodes = inOrderNosArray(); // primeiro pega os nós
 
-        Integer[][] matriz = new Integer[altura+1][nodes.size()]; // usa nodes.size()
+        No[][] matriz = new No[altura+1][nodes.size()]; // usa nodes.size()
 
         Integer k = 0;
 
         for(No node : nodes){
-            matriz[profundidade(node)][k] = node.getElemento();
+            matriz[profundidade(node)][k] = node;
             k++;  
         }
 
@@ -393,38 +392,82 @@ public class ArvoreAVL {
         else
             return buscar(raiz.getFilhoDireito(), valor);
     }
+
     public static void main(String[] args) {
 
         ArvoreAVL arvore = new ArvoreAVL();
+        Scanner sc = new Scanner(System.in);
 
-        int[] valores = {10, 5, 15, 2, 8, 22};
+        int opcao;
 
-        System.out.println("=== INSERÇÕES INICIAIS ===");
+        do {
+            System.out.println("\n===== MENU AVL =====");
+            System.out.println("1 - Inserir nó");
+            System.out.println("2 - Remover nó");
+            System.out.println("3 - Buscar nó");
+            System.out.println("4 - Mostrar árvore");
+            System.out.println("0 - Sair");
+            System.out.print("Escolha: ");
 
-        for (int v : valores) {
-            System.out.println("\nInserindo: " + v);
+            opcao = sc.nextInt();
 
-            No novo = new No(v, null); // <-- ajuste aqui
-            arvore.inserirNo(novo);
+            switch (opcao) {
 
-            arvore.desenharArvore();
-        }
+                case 1:
+                    System.out.print("Valor para inserir: ");
+                    int valorInserir = sc.nextInt();
 
-        System.out.println("\n=== INSERINDO 25 ===");
-        No n25 = new No(25, null);
-        arvore.inserirNo(n25);
+                    No novo = new No(valorInserir, null);
+                    arvore.inserirNo(novo);
 
-        arvore.desenharArvore();
+                    System.out.println("Inserido!");
+                    break;
 
-        System.out.println("\n=== REMOVENDO 5 ===");
+                case 2:
+                    System.out.print("Valor para remover: ");
+                    int valorRemover = sc.nextInt();
 
-        No noRemover = buscar(arvore.root(), 5);
+                    No noRemover = buscar(arvore.root(), valorRemover);
 
-        if (noRemover != null) {
-            arvore.removerNo(noRemover);
-            arvore.desenharArvore();
-        } else {
-            System.out.println("Nó 5 não encontrado!");
-        }
+                    if (noRemover != null) {
+                        arvore.removerNo(noRemover);
+                        System.out.println("Removido!");
+                    } else {
+                        System.out.println("Valor não encontrado.");
+                    }
+                    break;
+
+                case 3:
+                    System.out.print("Valor para buscar: ");
+                    int valorBuscar = sc.nextInt();
+
+                    No resultado = buscar(arvore.root(), valorBuscar);
+
+                    if (resultado != null) {
+                        System.out.println("Nó encontrado!");
+                    } else {
+                        System.out.println("Nó não encontrado.");
+                    }
+                    break;
+
+                case 4:
+                    if (!arvore.isEmpty()) {
+                        arvore.desenharArvore();
+                    } else {
+                        System.out.println("Árvore vazia.");
+                    }
+                    break;
+
+                case 0:
+                    System.out.println("Encerrando...");
+                    break;
+
+                default:
+                    System.out.println("Opção inválida!");
+            }
+
+        } while (opcao != 0);
+
+        sc.close();
     }
 }

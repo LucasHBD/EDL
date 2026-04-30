@@ -67,4 +67,9 @@ public class No {
         }
         return false;
     }
+
+    @Override
+    public String toString(){
+        return elemento + " [" + balanceamento + "]"; 
+    }
 }
