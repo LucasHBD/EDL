@@ -5,17 +5,9 @@ public class No {
     private No filhoEsquerdo, filhoDireito, pai;
     private Integer balanceamento;
 
-    public No(){
-        this.elemento = null;
-        this.pai = null;
-        this.filhoEsquerdo = null;
-        this.filhoDireito = null;
-        this.balanceamento = 0;
-    }
-
-    public No(Integer elemento, No pai){
+    public No(Integer elemento){
         this.elemento = elemento;
-        this.pai = pai;
+        this.pai = null;
         this.filhoEsquerdo = null;
         this.filhoDireito = null;
         this.balanceamento = 0;

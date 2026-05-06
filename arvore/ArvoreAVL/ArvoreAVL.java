@@ -24,34 +24,40 @@ public class ArvoreAVL {
         return raiz;
     }
 
-    private void CalcularFbInsercao(No node){
-        No aux = node.getPai();
-        if(umFilhoDireito(node)){
-            while(aux != null){
-                aux.setBalanceamento(aux.getBalanceamento() - 1);
-                if(aux.getBalanceamento() == -2 || aux.getBalanceamento() == 2){
-                    desbalanceado = aux;
-                    break;
-                }
-                if(aux.getBalanceamento() == 0){
-                    break;
-                }
-                aux = aux.getPai();
-            }
-        } else {
-            while(aux != null){
-                aux.setBalanceamento(aux.getBalanceamento() + 1);
-                if(aux.getBalanceamento() == -2 || aux.getBalanceamento() == 2){
-                    desbalanceado = aux;
-                    break;
-                }
-                if(aux.getBalanceamento() == 0){
-                    break;
-                }
-                aux = aux.getPai();
-            }
-        }
-    }
+    //private Integer fatorBalanceamento(No node){
+       // No pai = node.getPai();
+      //  Integer fb = altura(pai.getFilhoEsquerdo()) - altura(pai.getFilhoDireito());
+      //  return fb;
+   // }
+
+    // private void CalcularFbInsercao(No node){
+    //     No aux = node.getPai();
+    //     if(umFilhoDireito(node)){
+    //         while(aux != null){
+    //             aux.setBalanceamento(aux.getBalanceamento());
+    //             if(aux.getBalanceamento() == -2 || aux.getBalanceamento() == 2){
+    //                 desbalanceado = aux;
+    //                 break;
+    //             }
+    //             if(aux.getBalanceamento() == 0){
+    //                 break;
+    //             }
+    //             aux = aux.getPai();
+    //         }
+    //     } else {
+    //         while(aux != null){
+    //             aux.setBalanceamento(aux.getBalanceamento());
+    //             if(aux.getBalanceamento() == -2 || aux.getBalanceamento() == 2){
+    //                 desbalanceado = aux;
+    //                 break;
+    //             }
+    //             if(aux.getBalanceamento() == 0){
+    //                 break;
+    //             }
+    //             aux = aux.getPai();
+    //         }
+    //     }
+    // }
     
     private void calcularFbRemocao(No node){
         No aux = node.getPai();
@@ -268,19 +274,15 @@ public class ArvoreAVL {
     }
 
     public Integer altura(No node){
-        if(noExterno(node)) return 0;
-        else{
-            Integer alturaEsquerda = 0;
-            Integer alturaDireita = 0;
-            Integer altura = 0;
-            if(node.getFilhoEsquerdo() != null) alturaEsquerda = altura(node.getFilhoEsquerdo()) + 1;
-            if(node.getFilhoDireito() != null) alturaDireita = altura(node.getFilhoDireito()) + 1;
-            altura = alturaEsquerda;
-            if(alturaDireita > alturaEsquerda){
-                altura = alturaDireita;
-            }
-            return altura;
+        //if(noExterno(node)) return 0;1
+        if(node == null){
+            return 0;
         }
+        
+        int alturaEsquerda = altura(filhoEsquerdo(node));
+        int alturaDireita = altura(filhoDireito(node));
+
+        return Math.max(alturaEsquerda, alturaDireita) + 1;
     }
 
     public Integer profundidade(No node){
@@ -289,6 +291,7 @@ public class ArvoreAVL {
     }
 
     public void inserirNo(No node){
+
         desbalanceado = null;
         No aux = raiz;
         if(isEmpty()){
@@ -318,8 +321,32 @@ public class ArvoreAVL {
                 }
             }
             tamanho++;
-            CalcularFbInsercao(node);
-        }
+            No pai = node.getPai();
+            System.out.println(pai);
+            while(pai != null && pai.getBalanceamento() != 0){
+                if(umFilhoDireito(node)){     
+                    pai.setBalanceamento(pai.getBalanceamento() - 1);
+                    if(pai.getBalanceamento() == -2 || pai.getBalanceamento() == 2){
+                        desbalanceado = pai;
+                        break;
+                    }
+                    if(pai.getBalanceamento() == 0){
+                        break;
+                    }
+                    pai = pai.getPai();
+                } else {
+                    pai.setBalanceamento(pai.getBalanceamento() + 1);
+                    if(pai.getBalanceamento() == -2 || pai.getBalanceamento() == 2){
+                        desbalanceado = pai;
+                        break;
+                    }
+                    if(pai.getBalanceamento() == 0){
+                        break;
+                    }
+                    pai = pai.getPai();
+                    }
+                }
+            }
         rebalancear();
     }
 
@@ -476,7 +503,7 @@ public class ArvoreAVL {
                     System.out.print("Valor para inserir: ");
                     int valorInserir = sc.nextInt();
 
-                    No novo = new No(valorInserir, null);
+                    No novo = new No(valorInserir);
                     arvore.inserirNo(novo);
 
                     System.out.println("Inserido!");
