@@ -291,7 +291,6 @@ public class ArvoreAVL {
     }
 
     public void inserirNo(No node){
-
         desbalanceado = null;
         No aux = raiz;
         if(isEmpty()){
@@ -322,8 +321,7 @@ public class ArvoreAVL {
             }
             tamanho++;
             No pai = node.getPai();
-            System.out.println(pai);
-            while(pai != null && pai.getBalanceamento() != 0){
+            while(pai != null){
                 if(umFilhoDireito(node)){     
                     pai.setBalanceamento(pai.getBalanceamento() - 1);
                     if(pai.getBalanceamento() == -2 || pai.getBalanceamento() == 2){
