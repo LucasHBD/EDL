@@ -28,10 +28,10 @@ public class ArvoreAVL {
         No aux = node.getPai();
         if(umFilhoDireito(node)){
             while(aux != null){
-                Integer fb = aux.getBalanceamento() - 1;
-                aux.setBalanceamento(fb);
+                aux.setBalanceamento(aux.getBalanceamento() - 1);
                 if(aux.getBalanceamento() == -2 || aux.getBalanceamento() == 2){
                     desbalanceado = aux;
+                    break;
                 }
                 if(aux.getBalanceamento() == 0){
                     break;
@@ -40,10 +40,10 @@ public class ArvoreAVL {
             }
         } else {
             while(aux != null){
-                Integer fb = aux.getBalanceamento() + 1;
-                aux.setBalanceamento(fb);
+                aux.setBalanceamento(aux.getBalanceamento() + 1);
                 if(aux.getBalanceamento() == -2 || aux.getBalanceamento() == 2){
                     desbalanceado = aux;
+                    break;
                 }
                 if(aux.getBalanceamento() == 0){
                     break;
@@ -57,27 +57,33 @@ public class ArvoreAVL {
         No aux = node.getPai();
         if(umFilhoDireito(node)){
             while(aux != null){
-                Integer fb = aux.getBalanceamento() + 1;
-                aux.setBalanceamento(fb);
+                aux.setBalanceamento(aux.getBalanceamento() + 1);
                 if(aux.getBalanceamento() == -2 || aux.getBalanceamento() == 2){
                     desbalanceado = aux;
-                }
-                if(aux.getBalanceamento() != 0){
                     break;
                 }
-                aux = aux.getPai();
+                if(aux.getBalanceamento() == 0){
+                    node = aux;
+                    aux = aux.getPai();
+                }
+                else {
+                    break;
+                }
             }
         } else {
             while(aux != null){
-                Integer fb = aux.getBalanceamento() - 1;
-                aux.setBalanceamento(fb);
+                aux.setBalanceamento(aux.getBalanceamento() - 1);
                 if(aux.getBalanceamento() == -2 || aux.getBalanceamento() == 2){
                     desbalanceado = aux;
-                }
-                if(aux.getBalanceamento() != 0){
                     break;
                 }
-                aux = aux.getPai();
+                if(aux.getBalanceamento() == 0){
+                    node = aux;
+                    aux = aux.getPai();
+                }
+                else {
+                    break;
+                }
             }
         }
     }
@@ -99,6 +105,8 @@ public class ArvoreAVL {
 
         novo_pai.setFilhoEsquerdo(node);
         node.setPai(novo_pai);
+
+        atualizarFbRotacaoEsquerda(node, novo_pai);
     }
 
     private void rotacaoDireita(No node){
@@ -121,6 +129,91 @@ public class ArvoreAVL {
 
         novo_pai.setFilhoDireito(node);
         node.setPai(novo_pai);
+
+        atualizarFbRotacaoDireita(node, novo_pai);
+    }
+
+    private void atualizarFbRotacaoEsquerda(No node, No novo_pai){
+        if(novo_pai.getBalanceamento() == -1){
+            node.setBalanceamento(0);
+            novo_pai.setBalanceamento(0);
+        } else if(novo_pai.getBalanceamento() == 0){
+            node.setBalanceamento(1);
+            novo_pai.setBalanceamento(-1);
+        }
+    }
+
+    private void atualizarFbRotacaoDireita(No node, No novo_pai){
+        if(novo_pai.getBalanceamento() == 1){
+            node.setBalanceamento(0);
+            novo_pai.setBalanceamento(0);
+        } else if(novo_pai.getBalanceamento() == 0){
+            node.setBalanceamento(-1);
+            novo_pai.setBalanceamento(1);
+        }
+    }
+
+    private void rebalancear(){
+        if(desbalanceado == null){
+            return;
+        }
+
+        if(desbalanceado.getBalanceamento() == 2){
+            No filhoEsq = desbalanceado.getFilhoEsquerdo();
+            if(filhoEsq != null && filhoEsq.getBalanceamento() == -1){
+                Integer fbNeto = (filhoEsq.getFilhoDireito() != null) ? filhoEsq.getFilhoDireito().getBalanceamento() : 0;
+                rotacaoEsquerda(filhoEsq);
+                rotacaoDireita(desbalanceado);
+                ajustarFbRotacaoDupla(desbalanceado.getPai(), fbNeto, true);
+            } else {
+                rotacaoDireita(desbalanceado);
+            }
+        } else if(desbalanceado.getBalanceamento() == -2){
+            No filhoDir = desbalanceado.getFilhoDireito();
+            if(filhoDir == null){
+                return;
+            }
+            if(filhoDir != null && filhoDir.getBalanceamento() == 1){
+                Integer fbNeto = (filhoDir.getFilhoEsquerdo() != null) ? filhoDir.getFilhoEsquerdo().getBalanceamento() : 0;
+                rotacaoDireita(filhoDir);
+                rotacaoEsquerda(desbalanceado);
+                ajustarFbRotacaoDupla(desbalanceado.getPai(), fbNeto, false);
+            } else {
+                rotacaoEsquerda(desbalanceado);
+            }
+        }
+        desbalanceado = null;
+    }
+
+    private void ajustarFbRotacaoDupla(No novoTopo, Integer fbNeto, Boolean casoPai_dupla){
+        if(novoTopo == null) return;
+        No esq = novoTopo.getFilhoEsquerdo();
+        No dir = novoTopo.getFilhoDireito();
+        novoTopo.setBalanceamento(0);
+
+        if(casoPai_dupla){
+            if(fbNeto == 1){
+                if(esq != null) esq.setBalanceamento(0);
+                if(dir != null) dir.setBalanceamento(-1);
+            } else if(fbNeto == -1){
+                if(esq != null) esq.setBalanceamento(1);
+                if(dir != null) dir.setBalanceamento(0);
+            } else {
+                if(esq != null) esq.setBalanceamento(0);
+                if(dir != null) dir.setBalanceamento(0);
+            }
+        } else {
+            if(fbNeto == -1){
+                if(esq != null) esq.setBalanceamento(1);
+                if(dir != null) dir.setBalanceamento(0);
+            } else if(fbNeto == 1){
+                if(esq != null) esq.setBalanceamento(0);
+                if(dir != null) dir.setBalanceamento(-1);
+            } else {
+                if(esq != null) esq.setBalanceamento(0);
+                if(dir != null) dir.setBalanceamento(0);
+            }
+        }
     }
 
     public Boolean isEmpty(){
@@ -212,7 +305,7 @@ public class ArvoreAVL {
                         node.setPai(aux);
                     }
                 }
-                if(node.getElemento() < aux.getElemento()){
+                else if(node.getElemento() < aux.getElemento()){
                     if(temFilhoEsquerdo(aux)){
                         aux = aux.getFilhoEsquerdo();
                     }
@@ -220,167 +313,133 @@ public class ArvoreAVL {
                         aux.setFilhoEsquerdo(node);
                         node.setPai(aux);
                     }
+                } else {
+                    return;
                 }
             }
             tamanho++;
             CalcularFbInsercao(node);
         }
-        if(desbalanceado != null){
-            if(desbalanceado.getBalanceamento() == 2){
-                if(desbalanceado.getFilhoEsquerdo() != null &&
-                desbalanceado.getFilhoEsquerdo().getBalanceamento() == -1){
-                    rotacaoEsquerda(desbalanceado.getFilhoEsquerdo());
-                }
-                rotacaoDireita(desbalanceado);
-            }
-            else if(desbalanceado.getBalanceamento() == -2){
-                if(desbalanceado.getFilhoDireito() != null &&
-                desbalanceado.getFilhoDireito().getBalanceamento() == 1){
-                    rotacaoDireita(desbalanceado.getFilhoDireito());
-                }
-                rotacaoEsquerda(desbalanceado);
-            }
-        }
+        rebalancear();
     }
 
     public void removerNo(No node){
+        desbalanceado = null;
+        removerNoInterno(node);
+        rebalancear();
+    }
+
+    public void removerNoInterno(No node){
         if(noExterno(node)){
             if(node != raiz){
+                No nodePai = node.getPai();
                 if(umFilhoEsquerdo(node)){
-                    node.getPai().setFilhoEsquerdo(null);
-                    calcularFbRemocao(node);
-                } else if(umFilhoDireito(node)){
-                    node.getPai().setFilhoDireito(null);
-                    calcularFbRemocao(node);
+                    nodePai.setFilhoEsquerdo(null);
+                } else {
+                    nodePai.setFilhoDireito(null);
                 }
+                calcularFbRemocao(node);
+                node.setPai(null);
             }
             else{
                 raiz = null;
             }
             node = null;
             tamanho--;
-        }
-        else if(node.oneChild()){
+        } else if(node.oneChild()){
             No node_pai = node.getPai();
+            No nodeFilho = temFilhoEsquerdo(node) ? node.getFilhoEsquerdo() : node.getFilhoDireito();
+
             if(node_pai != null){
-                No node_filho;
                 if(umFilhoEsquerdo(node)){
-                    if(temFilhoEsquerdo(node)){
-                        node_filho = node.getFilhoEsquerdo();
+                    node_pai.setFilhoEsquerdo(nodeFilho);
+                } else {
+                    node_pai.setFilhoDireito(nodeFilho);
                     }
-                    else {
-                        node_filho = node.getFilhoDireito();
-                    }
-                    node_pai.setFilhoEsquerdo(node_filho);
-                    node_filho.setPai(node_pai);
+                nodeFilho.setPai(node_pai);
+                calcularFbRemocao(nodeFilho);
+                } else {
+                    nodeFilho.setPai(null);
+                    raiz = nodeFilho;
+                    calcularFbRemocao(raiz);
                 }
-                else {
-                    if(temFilhoEsquerdo(node)){
-                        node_filho = node.getFilhoEsquerdo();
-                    }
-                    else{
-                        node_filho = node.getFilhoDireito();
-                    }
-                    node_pai.setFilhoDireito(node_filho);
-                    node_filho.setPai(node_pai);
-                }
-                calcularFbRemocao(node_filho);
-            }
-            else {
-                if(temFilhoDireito(node)){
-                    node.getFilhoDireito().setPai(null);
-                    raiz = node.getFilhoDireito();
-                    node.setFilhoDireito(null);
-                    node = null;
-                }
-                else {
-                    node.getFilhoEsquerdo().setPai(null);
-                    raiz = node.getFilhoEsquerdo();
-                    node.setFilhoEsquerdo(null);
-                    node = null;
-                }
-                calcularFbRemocao(raiz);
-            }
-            tamanho--;
-        }
-
-        else {
-            No sucessor = noSub(node.getFilhoDireito());
-            node.setElemento(sucessor.getElemento());
-            removerNo(sucessor);
-        }
-        if(desbalanceado != null && desbalanceado != node){
-
-            if(desbalanceado.getBalanceamento() == 2){
-
-                if(desbalanceado.getFilhoEsquerdo() != null &&
-                desbalanceado.getFilhoEsquerdo().getBalanceamento() == -1){
-                    rotacaoEsquerda(desbalanceado.getFilhoEsquerdo());
-                }
-
-                rotacaoDireita(desbalanceado);
-
-            } else if(desbalanceado.getBalanceamento() == -2){
-
-                if(desbalanceado.getFilhoDireito() != null &&
-                desbalanceado.getFilhoDireito().getBalanceamento() == 1){
-                    rotacaoDireita(desbalanceado.getFilhoDireito());
-                }
-
-                rotacaoEsquerda(desbalanceado);
+                node.setFilhoEsquerdo(null);
+                node.setFilhoDireito(null);
+                node.setPai(null);
+                tamanho --;
+            } else {
+                No sucessor = menorNo(node.getFilhoDireito());
+                node.setElemento(sucessor.getElemento());
+                removerNoInterno(sucessor);
             }
         }
-    }
-
-    private No noSub(No node){
+    
+    private No menorNo(No node){
         if(node.getFilhoEsquerdo() != null){
-            return noSub(node.getFilhoEsquerdo());
+            return menorNo(node.getFilhoEsquerdo());
         }
         return node;
     }
 
-    private void inOrderNos(No node){
-        if(noInterno(node) && node.getFilhoEsquerdo() != null){
-            inOrderNos(node.getFilhoEsquerdo());
-        }
-        nos.add(node);
-        if(noInterno(node) && node.getFilhoDireito() != null){
-            inOrderNos(node.getFilhoDireito());
-        }
-    }
-
-    private ArrayList<No> inOrderNosArray(){
-        nos = new ArrayList<No>();
-        inOrderNos(raiz);
-        return nos;
-    }
-
     public void desenharArvore(){
-        Integer altura = altura(raiz);
-
-        ArrayList<No> nodes = inOrderNosArray(); // primeiro pega os nós
-
-        No[][] matriz = new No[altura+1][nodes.size()]; // usa nodes.size()
-
-        Integer k = 0;
-
-        for(No node : nodes){
-            matriz[profundidade(node)][k] = node;
-            k++;  
+        if(isEmpty()){
+            System.out.println("Árvore vazia.");
+            return;
         }
-
+ 
+        ArrayList<No> inOrder = new ArrayList<>();
+        inOrderNos(raiz, inOrder);
+ 
+        int n = inOrder.size();
+        int altura = altura(raiz);
+ 
+        int[] posInOrder = new int[n];
+        for(int i = 0; i < n; i++){
+            posInOrder[i] = i;
+        }
+ 
+        int larguraCelula = 12;
+        int larguraTotal = n * larguraCelula;
+ 
+        int[] posX = new int[n];
+        for(int i = 0; i < n; i++){
+            posX[i] = i * larguraCelula + larguraCelula / 2;
+        }
+ 
+        StringBuilder[] linhas = new StringBuilder[altura + 1];
         for(int i = 0; i <= altura; i++){
-            for(int j = 0; j < nodes.size(); j++){
-                if(matriz[i][j] == null)
-                    System.out.print(" ");
-                else
-                    System.out.print(matriz[i][j]);
-
-                System.out.print(" ");
+            linhas[i] = new StringBuilder();
+            for(int j = 0; j < larguraTotal; j++) linhas[i].append(' ');
+        }
+ 
+        for(int i = 0; i < n; i++){
+            No node = inOrder.get(i);
+            int prof = profundidade(node);
+            int col  = posX[i];
+            String label = node.toString();
+            for(int c = 0; c < label.length() && col + c < larguraTotal; c++){
+                linhas[prof].setCharAt(col + c, label.charAt(c));
             }
-            System.out.println();
+        }
+ 
+        System.out.println();
+        for(int i = 0; i <= altura; i++){
+            System.out.println(linhas[i].toString().stripTrailing());
+        }
+        System.out.println();
+    }
+ 
+    private void inOrderNos(No node, ArrayList<No> lista){
+        if(node == null) return;
+        if(noInterno(node) && node.getFilhoEsquerdo() != null){
+            inOrderNos(node.getFilhoEsquerdo(), lista);
+        }
+        lista.add(node);
+        if(noInterno(node) && node.getFilhoDireito() != null){
+            inOrderNos(node.getFilhoDireito(), lista);
         }
     }
+
 
     public static No buscar(No raiz, int valor) {
         if (raiz == null || raiz.getElemento() == null) return null;
